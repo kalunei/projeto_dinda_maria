@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, send_from_directory
+from flask import Flask, request, render_template, send_from_directory, redirect, url_for, session
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib import colors
@@ -7,6 +7,43 @@ from num2words import num2words
 from datetime import datetime
 
 app = Flask(__name__)
+app.secret_key = "chave_secreta"
+
+
+@app.route('/gerar')  # Página para gerar o link com o valor
+def gerar():
+    return render_template('gerar.html')
+
+@app.route('/gerar_link', methods=['POST'])
+def gerar_link():
+    valor = request.form.get('valor')
+    if not valor:
+        return "Erro: Valor inválido!", 400
+
+    session['valor'] = valor  # Armazena o valor na sessão
+    return redirect(url_for('recibo'))  # Redireciona para uma rota fixa
+
+
+@app.route('/recibo')
+def recibo():
+    valor = session.get('valor', 'Valor Padrão')  # Obtém o valor da sessão
+    return render_template('index.html', valor=valor)
+
+
+
+
+@app.route('/')
+def index():
+    valor = session.get('valor', 'Valor Padrão')  # Obtém o valor da sessão
+    return render_template('index.html', valor=valor)
+
+@app.route('/definir_valor', methods=['POST'])
+def definir_valor():
+    valor = request.form.get('valor')
+    session['valor'] = valor  # Armazena o valor na sessão
+    return redirect(url_for('index'))
+
+
 
 # Criação da pasta de uploads se não existir
 UPLOAD_FOLDER = 'uploads'
@@ -90,10 +127,6 @@ def gerar_numero_recibo():
     return f"{data_atual}-{numero_atual:04d}"
 
 # Rota para renderizar o formulário
-@app.route('/')
-@app.route('/<valor>')  # Captura o valor passado na URL
-def index(valor="Valor Padrão"):
-    return render_template('index.html', valor=valor)
 
 @app.route('/contato')
 def contato():

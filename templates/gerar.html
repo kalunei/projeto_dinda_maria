@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerar Link do Recibo</title>
+</head>
+<body>
+    <h1>Gerador de Recibo</h1>
+    <form action="/gerar_link" method="POST">
+        <label for="valor">Valor do Recibo:</label>
+        <input type="number" step="0.01" id="valor" name="valor" required>
+        <button type="submit">Gerar Link</button>
+    </form>
+</body>
+</html>
