@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download do Recibo</title>
+    <style>
+        /* Resetando margens e preenchimentos padrão */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Corpo da página */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        /* Contêiner principal */
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        /* Título da página */
+        h1 {
+            font-size: 26px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        /* Estilizando o texto de aviso */
+        p {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        /* Estilizando o link de download */
+        a {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 18px;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Efeito de hover no link */
+        a:hover {
+            background-color: #45a049;
+        }
+
+        /* Estilos do sistema de avaliação */
+        .rating-system {
+            display: none;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .rating-system h2 {
+            margin-bottom: 15px;
+            font-size: 22px;
+            color: #4CAF50;
+        }
+
+        .rating-stars {
+            font-size: 30px;
+            color: #d3d3d3; /* Cor de fundo das estrelas não selecionadas */
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .rating-stars i {
+            cursor: pointer;
+        }
+
+        .rating-stars i.selected {
+            color: #ffcc00; /* Cor das estrelas selecionadas */
+        }
+
+        .comment-box {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .submit-comment {
+            padding: 12px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .submit-comment:hover {
+            background-color: #45a049;
+        }
+
+        /* Media Query para telas menores */
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+                width: 100%;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            p {
+                font-size: 14px;
+            }
+
+            a {
+                font-size: 16px;
+                padding: 10px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Recibo gerado com sucesso!</h1>
+        <p>Você pode fazer o download do seu recibo clicando no link abaixo:</p>
+        <a href="{{ url_for('upload_file', filename=pdf_filename) }}" download id="downloadLink">Baixar Recibo</a>
+
+        <!-- Sistema de Avaliação -->
+        <div class="rating-system" id="ratingSystem">
+            <h2>Deixe sua avaliação</h2>
+            <div class="rating-stars" id="starRating">
+                <i class="fa fa-star" data-value="1"></i>
+                <i class="fa fa-star" data-value="2"></i>
+                <i class="fa fa-star" data-value="3"></i>
+                <i class="fa fa-star" data-value="4"></i>
+                <i class="fa fa-star" data-value="5"></i>
+            </div>
+            <textarea class="comment-box" id="commentBox" placeholder="Deixe um comentário (opcional)"></textarea>
+            <button class="submit-comment" id="submitComment">Enviar Avaliação</button>
+        </div>
+    </div>
+
+    <!-- Carregando o ícone das estrelas -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <script>
+        // Variáveis globais para armazenar a avaliação e o comentário
+        let rating = 0;
+        let comment = "";
+
+        // Exibir o sistema de avaliação após clicar no link de download
+        document.getElementById('downloadLink').addEventListener('click', function() {
+            setTimeout(function() {
+                document.getElementById('ratingSystem').style.display = 'block';
+            }, 500);  // Espera 500ms antes de exibir o sistema de avaliação
+        });
+
+        // Marcar as estrelas para avaliação
+        const stars = document.querySelectorAll('#starRating i');
+        stars.forEach(star => {
+            star.addEventListener('mouseover', function() {
+                const value = this.getAttribute('data-value');
+                highlightStars(value);
+            });
+
+            star.addEventListener('click', function() {
+                rating = this.getAttribute('data-value');
+                highlightStars(rating);
+            });
+        });
+
+        // Função para destacar as estrelas
+        function highlightStars(value) {
+            stars.forEach(star => {
+                const starValue = star.getAttribute('data-value');
+                if (starValue <= value) {
+                    star.classList.add('selected');
+                } else {
+                    star.classList.remove('selected');
+                }
+            });
+        }
+
+        // Enviar comentário e avaliação
+        document.getElementById('submitComment').addEventListener('click', function() {
+            comment = document.getElementById('commentBox').value;
+            if (rating === 0) {
+                alert('Por favor, selecione uma avaliação de estrelas.');
+            } else {
+                // Obter a data atual
+                const currentDate = new Date().toISOString();
+
+                alert('Avaliação enviada! ' + 'Estrelas: ' + rating + ' | Comentário: ' + comment);
+
+                // Bloquear o botão de envio após o clique
+                document.getElementById('submitComment').disabled = true;
+                document.getElementById('submitComment').innerText = 'Enviado';
+
+                // Enviar a avaliação para o backend (Flask)
+                fetch('/avaliar', {
+                    method: 'POST',
+                    body: new URLSearchParams({
+                        'nome': 'Nome' ,  // Substitua com o nome real, se aplicável
+                        'avaliacao': comment,
+                        'estrelas': rating,
+                        'data': currentDate  // Incluindo a data no envio
+                    })
+                }).then(response => response.json())
+                .then(data => console.log(data));
+            }
+        });
+
+    </script>
+
+</body>
+</html>

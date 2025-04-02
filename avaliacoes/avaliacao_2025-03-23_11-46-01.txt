@@ -1,0 +1,4 @@
+Nome: Nome
+Avaliação: Arroz 
+Estrelas: 4
+Data: 2025-03-23T14:45:59.155Z
