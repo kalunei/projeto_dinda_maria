@@ -254,6 +254,43 @@
             position: relative;
             left: -2000px; 
         }
+                /* Modo escuro */
+                .dark-mode {
+            background-color: #333;
+            color: white;
+        }
+
+        .dark-mode h1, 
+        .dark-mode label, 
+        .dark-mode .switch-label,
+        .dark-mode #switchText,
+        .dark-mode #maria_reclamacao,
+        .dark-mode select,
+        .dark-mode input[type="text"],
+        .dark-mode input[type="date"] {
+            color: white;
+        }
+
+        .dark-mode input::placeholder {
+            color: #ddd;
+        }
+
+        .dark-mode .form-container {
+            background-color: #444;
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+        }
+
+        .dark-mode input, 
+        .dark-mode select {
+            background-color: #555;
+            border: 1px solid #777;
+        }
+
+        .dark-mode input:focus, 
+        .dark-mode select:focus {
+            border-color: #66a3ff;
+        }
+
     </style>
 </head>
 <body>
@@ -282,7 +319,7 @@
             <input type="text" id="nome" name="nome" placeholder="Ex: Daniel Camillo Pinheiro Calhau" required>
 
             
-            
+            <label for="valor_recibo">valor do recibo:</label>
             <input type="text" name="meu_campo" value="{{ valor }}" readonly>
             <input type="hidden" name="valor" value="{{ valor }}">
 
