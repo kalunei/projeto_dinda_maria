@@ -2,4 +2,3 @@ flask
 gunicorn
 reportlab
 num2words
-datatime
