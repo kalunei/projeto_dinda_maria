@@ -1,3 +1,6 @@
 flask
 gunicorn
 reportlab
+os
+num2words
+datatime
