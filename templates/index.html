@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+    <title>Gerar Recibo</title>
+
+    <!-- Cropper.js CDN -->
+    <!-- CSS do Cropper -->
+    <link  href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet"/>
+
+    <!-- JS do Cropper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+
+    <style>
+
+
+        /* Resetando margens e preenchimentos padrão */
+        
+
+        /* Corpo da página */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Modo escuro */
+        .dark-mode {
+            background-color: #333;
+            color: white;
+        }
+
+        /* Botão de alternância de tema */
+        .toggle-theme {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-theme:hover {
+            background-color: #3498db;
+        }
+
+        /* Contêiner do formulário */
+        .form-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 600px;
+            animation: slideUp 1s ease-out forwards;
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        /* Animação de deslizamento para o formulário */
+        @keyframes slideUp {
+            0% {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Título do formulário */
+        h1 {
+            text-align: center;
+            font-size: 26px;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        /* Animação de fade-in para o título */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        /* Estilizando os rótulos do formulário */
+        label {
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 8px;
+            display: block;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        label:hover {
+            color: #2980b9;
+        }
+
+        /* Estilizando os campos de entrada */
+        input[type="text"], input[type="date"], select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #555;
+            outline: none;
+            transition: border-color 0.3s ease, transform 0.2s ease;
+        }
+
+        /* Efeito de foco nos campos */
+        input[type="text"]:focus, input[type="date"]:focus, select:focus {
+            border-color: #2980b9;
+            transform: scale(1.02);
+        }
+
+        /* Estilizando o botão de envio */
+        input[type="submit"] {
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%;
+            font-weight: bold;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        /* Animação para o botão de envio */
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Efeito de hover no botão */
+        input[type="submit"]:hover {
+            background-color: #3498db;
+            transform: translateY(-5px);
+        }
+
+        /* Estilizando os placeholders */
+        input::placeholder {
+            color: #aaa;
+            font-style: italic;
+        }
+
+        /* Ajustando o layout para telas menores */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .form-container {
+                padding: 25px;
+                width: 100%;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            label {
+                font-size: 13px;
+            }
+
+            input[type="text"], input[type="submit"], input[type="date"], select {
+                font-size: 14px;
+            }
+        }
+
+        /* Estilo para o switch */
+        .switch-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .switch-label {
+            font-size: 16px;
+            margin-right: 10px;
+
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            border-radius: 50%;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+        }
+
+        input:checked + .slider {
+            background-color: #2980b9;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .maria_reclamacao {
+            position: relative;
+            left: -2000px; 
+        }
+                /* Modo escuro */
+                .dark-mode {
+            background-color: #333;
+            color: white;
+        }
+
+        .dark-mode h1, 
+        .dark-mode label, 
+        .dark-mode .switch-label,
+        .dark-mode #switchText,
+        .dark-mode #maria_reclamacao,
+        .dark-mode select,
+        .dark-mode input[type="text"],
+        .dark-mode input[type="date"] {
+            color: white;
+        }
+
+        .dark-mode input::placeholder {
+            color: #ddd;
+        }
+
+        .dark-mode .form-container {
+            background-color: #444;
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+        }
+
+        .dark-mode input, 
+        .dark-mode select {
+            background-color: #555;
+            border: 1px solid #777;
+        }
+
+        .dark-mode input:focus, 
+        .dark-mode select:focus {
+            border-color: #66a3ff;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Botão de alternância de tema -->
+    <button class="toggle-theme" id="toggleTheme">Modo Escuro</button>
+
+    <div class="form-container">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="{{ url_for('static', filename='pluri_b.png') }}" alt="Logo Pluri" style="max-width: 200px; height: auto;">
+        </div>
+        <h1>Preencha os Dados para Gerar o Recibo</h1>
+
+        <!-- Switch de Promotor/Supervisor -->
+        <div class="switch-container">
+            <span class="switch-label" id="switchText">Promotor</span>
+            <label class="switch">
+                <input type="checkbox" id="roleSwitch">
+                <span class="slider"></span>
+            </label>
+            <span id="maria_reclamacao" class="switch-label">ㅤSupervisor</span>
+        </div>
+
+        <form id="formulario" method="POST" action="/gerar_recibo" enctype="multipart/form-data">
+
+            <!-- Campo oculto para enviar o valor do papel (Promotor ou Supervisor) -->
+            <input type="hidden" id="role" name="role" value="Promotor">
+
+            <label for="nome">Nome Completo:</label>
+            <input type="text" id="nome" name="nome" placeholder="Ex: Daniel Camillo Pinheiro Calhau" required>
+
+            
+            <label for="valor_recibo">valor do recibo:</label>
+            <input type="text" name="meu_campo" value="{{ '%.2f'|format(valor|float)|replace('.', ',') }}" readonly>
+            <input type="hidden" name="valor" value="{{ valor }}">
+
+            
+
+
+            <label for="data">Data do Evento:</label>
+            <input type="text" id="" name="data" required>
+            <!-- <input type="date" id="data" name="data" required> -->
+
+
+
+
+            <label for="telefone">Telefone:</label>
+            <input type="text" id="telefone" name="telefone" placeholder="Ex: (11) 917354230">
+
+            <label for="pix">Pix:</label>
+            <input type="text" id="" name="pix">
+            
+
+
+            <label for="cpf">CPF:</label>
+            <input type="text" id="cpf" name="cpf" placeholder="Ex: 436.948.118-00" required>
+
+            <label for="banco">Banco:</label>
+            <select id="banco" name="banco" required>
+                <option value="Itau">ITAÚ</option>
+                <option value="Bradesco">BRADESCO</option>
+                <option value="Santander">SANTANDER</option>
+                <option value="Caixa">CAIXA ECONÔMICA</option>
+                <option value="Outro">OUTRO</option>
+            </select>
+
+            <!-- Campo para outro banco -->
+            <div id="outroBancoContainer" style="display: none;">
+                <label for="outro_banco">Nome do Banco:</label>
+                <input type="text" id="outro_banco" name="outro_banco" placeholder="Digite o nome do banco">
+            </div>
+
+            <label for="evento">Evento:</label>
+            <input type="text" id="evento" name="evento" placeholder="Ex: HOTEL RIO TESTE" required>
+
+            <label for="data_pagamento">Data de Pagamento:</label>
+            <input type="date" id="data_pagamento" name="data_pagamento" required>
+
+            <label for="observacoes">Observações sobre o Valor:</label>
+            <input type="text" id="observacoes" name="observacoes" placeholder="Ex: 2 diárias de R$140,00 + 50 AC" required>
+
+
+
+            <!-- Input de imagem original -->
+            <input type="file" id="imageInput" accept="image/*" required onchange="handleImage()" >
+
+            <script>
+            function handleImage() {
+                const fileInput = document.getElementById('imageInput');
+                if (fileInput.files && fileInput.files[0]) {
+                    // Usa setTimeout para garantir que seja após o evento do usuário
+                    setTimeout(() => abrirCropper(), 0);
+                }
+            }
+            </script>
+            <br>
+
+            <!-- Botão para abrir o Cropper -->
+            <button type="button" onclick="abrirCropper()">Editar imagem</button><br><br>
+
+            <!-- Preview da imagem cortada -->
+            <img id="previewFinal" style="max-width: 200px; display: none;"><br>
+
+            <!-- Campo oculto que receberá o arquivo final da imagem (como File, não base64) -->
+            <input type="file" name="imagem" id="imagemBlob" style="display: none;" >
+
+
+
+                        
+
+
+
+
+            <input type="submit" value="Gerar Recibo">
+        </form>
+
+        <!-- Botão para página de Contato -->
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="{{ url_for('contato') }}" class="btn btn-primary">Contato</a>               
+        </div>
+
+    </div>
+
+    
+
+    <script>
+        // Alternar entre modo claro e escuro
+        const toggleTheme = document.getElementById('toggleTheme');
+        toggleTheme.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            toggleTheme.textContent = document.body.classList.contains('dark-mode') ? 'Modo Claro' : 'Modo Escuro';
+        });
+
+        // Mostrar o campo "Outro Banco" se a opção "Outro" for selecionada
+        const bancoSelect = document.getElementById('banco');
+        const outroBancoContainer = document.getElementById('outroBancoContainer');
+        
+        bancoSelect.addEventListener('change', () => {
+            if (bancoSelect.value === 'Outro') {
+                outroBancoContainer.style.display = 'block';
+            } else {
+                outroBancoContainer.style.display = 'none';
+            }
+        });
+
+        // Alternar entre Promotor e Supervisor
+        const roleSwitch = document.getElementById('roleSwitch');
+        const roleInput = document.getElementById('role');
+        const switchText = document.getElementById('switchText');
+
+        
+    </script>
+    
+    <script>
+        function abrirCropper() {
+          const fileInput = document.getElementById('imageInput');
+          const file = fileInput.files[0];
+          if (!file) {
+            alert("Selecione uma imagem primeiro.");
+            return;
+          }
+    
+          const imageUrl = URL.createObjectURL(file);
+    
+          const popup = window.open('', 'cropWindow', 'width=900,height=600,top=100,left=100');
+    
+          popup.document.write(`
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <title>Cropper</title>
+                <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+                <style>
+                body {
+                    margin: 0;
+                    background-color: #111;
+                    color: #fff;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    height: 100vh;
+                    overflow: hidden;
+                    font-family: Arial, sans-serif;
+                }
+
+                .container {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                img {
+                    max-width: 90vw;
+                    max-height: 70vh;
+                    border-radius: 8px;
+                    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+                }
+
+                button {
+                    margin-top: 20px;
+                    padding: 10px 25px;
+                    border: none;
+                    background-color: #08f;
+                    color: white;
+                    font-weight: bold;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    transition: 0.3s ease;
+                }
+
+                button:hover {
+                    background-color: #06c;
+                }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                <img id="image" src="${imageUrl}">
+                <button onclick="cortar()">Cortar</button>
+                </div>
+
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"><\/script>
+                <script>
+                let cropper;
+                const image = document.getElementById('image');
+                image.onload = function() {
+                    cropper = new Cropper(image, {
+                        aspectRatio: NaN, // área de seleção livre
+                        viewMode: 1
+                    });
+                };
+
+                function cortar() {
+                    const canvas = cropper.getCroppedCanvas();
+                    canvas.toBlob((blob) => {
+                        // Cria um objeto blob e envia para o formulário original
+                        const fileInput = window.opener.document.getElementById('imagemBlob');
+                        const dataTransfer = new DataTransfer();
+                        const file = new File([blob], "corte.png", { type: "image/png" });
+                        dataTransfer.items.add(file);
+                        fileInput.files = dataTransfer.files;
+
+                        // Mostrar preview
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            const preview = window.opener.document.getElementById('previewFinal');
+                            preview.src = e.target.result;
+                            preview.style.display = 'block';
+                        };
+                        reader.readAsDataURL(blob);
+
+                        setTimeout(function () {
+                            window.close();
+                        }, 1000); // fecha o popup depois de 1 segundo
+
+                    }, "image/png");
+                }
+                <\/script>
+            </body>
+            </html>
+            `);
+
+        }
+      </script>
+        
+      
+  
+
+
+</body>
+</html>

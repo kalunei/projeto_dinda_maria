@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato</title>
+
+    <!-- AOS Library -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+    
+    <style>
+        /* Estilos gerais do body */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.5s ease-in-out;
+        }
+
+        /* Container do formulário de contato */
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2); /* Maior sombra para destacar mais */
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(50px); /* Aumentei a distância para um movimento mais impactante */
+            animation: fadeInUp 1s ease-out forwards, zoomIn 1.2s ease-in-out 0.3s; /* Adicionando mais animações */
+        }
+
+        /* Animação de fade-in e transição */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px); /* Mais impacto no movimento */
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Título */
+        h1 {
+            color: #2c3e50;
+            font-size: 3rem; /* Aumentei o tamanho para mais impacto */
+            margin-bottom: 30px;
+            animation: fadeIn 1.2s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Estilos para as informações de contato */
+        .contact-info {
+            margin-bottom: 30px;
+            animation: slideIn 1s ease-in-out, bounce 1s ease 0.5s; /* Animação de "pulsar" */
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes bounce {
+            0% {
+                transform: scale(0.8);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .contact-info p {
+            font-size: 1.5rem;
+            color: #34495e;
+            line-height: 1.8;
+            transition: transform 0.4s ease-in-out;
+        }
+
+        .contact-info p:hover {
+            transform: scale(1.1);
+            color: #2980b9;
+        }
+
+        /* Botão genérico */
+        .btn {
+            text-decoration: none;
+            background-color: #2980b9;
+            color: white;
+            padding: 16px 40px; /* Aumentei o padding para maior impacto */
+            border-radius: 30px;
+            font-size: 18px;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            display: inline-block;
+            margin-top: 30px;
+            animation: bounceIn 0.8s ease-out; /* Animação de "entrar" no botão */
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.6);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .btn:hover {
+            background-color: #3498db;
+            transform: scale(1.1);
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1); /* Sombra mais forte */
+        }
+
+        /* Botão do WhatsApp */
+        .whatsapp-btn {
+            background-color: #25d366;
+            color: white;
+            padding: 16px 40px;
+            border-radius: 30px;
+            font-size: 18px;
+            display: inline-block;
+            margin-top: 30px;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            animation: bounceIn 0.8s ease-out 0.4s; /* Animação de "entrar" no botão */
+        }
+
+        .whatsapp-btn:hover {
+            background-color: #128c7e;
+            transform: scale(1.1);
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsividade para telas menores */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+
+            .contact-info p {
+                font-size: 1.2rem;
+            }
+
+            .container {
+                padding: 20px;
+                max-width: 90%;
+                width: auto;
+            }
+
+            .btn, .whatsapp-btn {
+                width: 80%;
+                padding: 15px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Container do conteúdo, com animações -->
+    <div class="container" data-aos="fade-up">
+        <h1 data-aos="fade-in">Informações de Contato</h1>
+        <div class="contact-info" data-aos="slide-up">
+            <p><strong>Email:</strong> exemplo@dominio.com</p>
+            <p><strong>Telefone:</strong> (11) 98765-4321</p>
+        </div>
+        <a href="https://wa.me/5511987654321" class="whatsapp-btn" target="_blank" data-aos="zoom-in">Fale Conosco no WhatsApp</a>
+        <br>
+        <a href="{{ url_for('index') }}" class="btn" data-aos="fade-right">Voltar ao Formulário</a>
+    </div>
+
+    <!-- AOS Library Script -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        // Inicializando o AOS
+        AOS.init({
+            duration: 1200,  // Duração aumentada para um efeito mais longo
+            once: true,      // Anima uma vez por elemento
+            easing: 'ease-out-back', // Efeito de desaceleração
+        });
+    </script>
+
+</body>
+</html>

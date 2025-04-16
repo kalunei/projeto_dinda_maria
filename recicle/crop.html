@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Recorte de Imagem</title>
+  <!-- CSS do Cropper -->
+  <link  href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet"/>
+
+  <!-- JS do Cropper -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+  <style>
+    body {
+      background-color: #111;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    #preview-container {
+      max-width: 100%;
+      max-height: 80vh;
+      margin-bottom: 20px;
+    }
+
+    #imagemPreview {
+      max-width: 100%;
+      max-height: 80vh;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 10px;
+      cursor: pointer;
+    }
+
+    #recorteResult {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Recorte a Imagem</h2>
+
+  <div id="preview-container">
+    <img id="imagemPreview" src="" alt="Imagem para corte">
+  </div>
+
+  <div>
+    <button id="btnRecortar">Recortar</button>
+    <button onclick="window.close()">Fechar</button>
+  </div>
+
+  <div id="recorteResult"></div>
+
+  <script src="https://unpkg.com/cropperjs"></script>
+  <script>
+    const imagemBase64 = localStorage.getItem('imagemParaCorte');
+    const img = document.getElementById('imagemPreview');
+    const resultContainer = document.getElementById('recorteResult');
+    let cropper;
+
+    if (imagemBase64) {
+      img.src = imagemBase64;
+      img.onload = () => {
+        cropper = new Cropper(img, {
+          aspectRatio: 1,
+          viewMode: 1,
+          background: false,
+          zoomable: true,
+          scalable: true,
+        });
+      };
+    } else {
+      alert('Nenhuma imagem encontrada. Fechando...');
+      window.close();
+    }
+
+    document.getElementById('btnRecortar').addEventListener('click', () => {
+      if (!cropper) return;
+
+      const canvas = cropper.getCroppedCanvas({
+        width: 300,
+        height: 300,
+      });
+
+      const croppedBase64 = canvas.toDataURL();
+      resultContainer.innerHTML = `<h3>Resultado:</h3><img src="${croppedBase64}" alt="Cortado">`;
+    });
+  </script>
+</body>
+</html>

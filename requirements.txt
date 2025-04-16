@@ -1,0 +1,6 @@
+flask
+gunicorn
+reportlab
+num2words
+google-auth
+google-api-python-client
