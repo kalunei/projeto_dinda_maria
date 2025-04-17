@@ -12,6 +12,8 @@ import tempfile
 from num2words import num2words
 import locale
 from datetime import datetime
+import math
+
 
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
@@ -33,7 +35,7 @@ criar_arquivo_credenciais()
 
 
 
-app = Flask(__name__)
+
 app = Flask(__name__)
 app.config['DEBUG'] = True
 app.secret_key = "chave_secreta"
@@ -119,16 +121,29 @@ def quebra_texto(c, texto, x, y, max_width=500):
     return text_object.getY()  # Retorna a posição Y final depois de imprimir o texto
 
 # Função para converter o valor numérico em por extenso
+
+
 def valor_por_extenso(valor):
-    extenso = num2words(valor, to='currency', lang='pt_BR')
-    # Capitalizar as iniciais das palavras
-    return f"({extenso.title()})"
+    extenso = num2words(valor, lang='pt_BR')
+
+    # Divide as palavras e coloca maiúscula apenas nas que não são "e"
+    palavras = extenso.split()
+    palavras_formatadas = [p.capitalize() if p != 'e' else p for p in palavras]
+    
+    resultado = ' '.join(palavras_formatadas)
+    return f"({resultado})"
+
 
 # Função para formatar data no formato "Cidade, DD/MM/AAAA"
 def formatar_local_data(local, data):
-    # Ajustando para aceitar a data no formato YYYY-MM-DD
-    data_obj = datetime.strptime(data, "%Y-%m-%d")
-    return f"{local}, {data_obj.strftime('%d/%m/%Y')}"
+    try:
+        # Ajustando para aceitar a data no formato YYYY-MM-DD
+        data_obj = datetime.strptime(data, "%Y-%m-%d")
+        return f"{local}, {data_obj.strftime('%d/%m/%Y')}"
+    except Exception as e:
+        print(f"Erro ao formatar data: {e}")
+        return "Data inválida"
+
 
 def formatar_data(data):
     # Ajustando para aceitar a data no formato YYYY-MM-DD
@@ -189,17 +204,17 @@ def upload_para_drive(caminho_arquivo, nome_no_drive):
 
 
 def formatar_data_extensa(data_str):
-    # Garante que os meses estejam em português
     try:
-        locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+        locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')  # Ajuste para garantir que o mês seja em português
     except:
-        locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil.1252')  # Para Windows
+        locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil.1252')  # Para Windows, se necessário
 
-    # Converte string para objeto datetime
-    data = datetime.strptime(data_str, "%d/%m/%Y")
+    # Convertendo a data de string para objeto datetime
+    data = datetime.strptime(data_str, "%Y-%m-%d")
     
-    # Formata a data no estilo "11 de Setembro de 1999"
+    # Formatação para "11 de Setembro de 1999"
     return data.strftime("%d de %B de %Y").capitalize()
+
 
 @app.route('/contato')
 def contato():
@@ -253,7 +268,9 @@ def gerar_recibo():
         banco = request.form['outro_banco']
     
     valor_extenso = valor_por_extenso(float(valor.replace('R$', '').replace(',', '.')))
-    local_data_formatada = formatar_local_data("Rio de Janeiro", data_pagamento_valocal)
+
+    local_data_formatada = formatar_local_data("Rio de Janeiro", data_pagamento)
+
     data_1 = data
     #data_1 = formatar_data(data) 
 
