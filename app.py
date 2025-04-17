@@ -141,22 +141,23 @@ from datetime import datetime
 
 def formatar_local_data(local, data):
     try:
-        # Ajustando o locale para português do Brasil
-        locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+        # Lista de meses em português
+        meses = [
+            'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+            'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+        ]
         
         # Ajustando para aceitar a data no formato YYYY-MM-DD
         data_obj = datetime.strptime(data, "%Y-%m-%d")
         
-        # Formatar o nome do mês de forma mais amigável
-        mes_nome = data_obj.strftime('%B')  # Ex: Janeiro
-        mes_nome = mes_nome.capitalize()  # Garantir que o mês tenha a primeira letra maiúscula
+        # Obter o nome do mês em português
+        mes_nome = meses[data_obj.month - 1].capitalize()  # A lista começa do índice 0, então subtraímos 1
         
         # Retornar o formato desejado: "Cidade, 21 de Janeiro de 2000"
         return f"{local}, {data_obj.day} de {mes_nome} de {data_obj.year}"
     except Exception as e:
         print(f"Erro ao formatar data: {e}")
         return "Data inválida"
-
 
 
 
