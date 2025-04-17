@@ -11,6 +11,7 @@ import os
 import tempfile
 from num2words import num2words
 import locale
+from babel.dates import format_date
 from datetime import datetime
 import math
 
@@ -204,16 +205,12 @@ def upload_para_drive(caminho_arquivo, nome_no_drive):
 
 
 def formatar_data_extensa(data_str):
-    try:
-        locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')  # Ajuste para garantir que o mês seja em português
-    except:
-        locale.setlocale(locale.LC_TIME, 'Portuguese_Brazil.1252')  # Para Windows, se necessário
-
     # Convertendo a data de string para objeto datetime
     data = datetime.strptime(data_str, "%Y-%m-%d")
     
-    # Formatação para "11 de Setembro de 1999"
-    return data.strftime("%d de %B de %Y").capitalize()
+    # Usando Babel para formatar a data no formato "11 de Setembro de 1999"
+    # Isso vai formatar como "17 de abril de 2025" ou algo similar.
+    return format_date(data, format='long', locale='pt_BR').replace("de", "de").capitalize()
 
 
 @app.route('/contato')
