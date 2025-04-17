@@ -136,14 +136,28 @@ def valor_por_extenso(valor):
 
 
 # Função para formatar data no formato "Cidade, DD/MM/AAAA"
+import locale
+from datetime import datetime
+
 def formatar_local_data(local, data):
     try:
+        # Ajustando o locale para português do Brasil
+        locale.setlocale(locale.LC_TIME, 'pt_BR.UTF-8')
+        
         # Ajustando para aceitar a data no formato YYYY-MM-DD
         data_obj = datetime.strptime(data, "%Y-%m-%d")
-        return f"{local}, {data_obj.strftime('%d/%m/%Y')}"
+        
+        # Formatar o nome do mês de forma mais amigável
+        mes_nome = data_obj.strftime('%B')  # Ex: Janeiro
+        mes_nome = mes_nome.capitalize()  # Garantir que o mês tenha a primeira letra maiúscula
+        
+        # Retornar o formato desejado: "Cidade, 21 de Janeiro de 2000"
+        return f"{local}, {data_obj.day} de {mes_nome} de {data_obj.year}"
     except Exception as e:
         print(f"Erro ao formatar data: {e}")
         return "Data inválida"
+
+
 
 
 def formatar_data(data):
@@ -369,7 +383,7 @@ def gerar_recibo():
             original_width, original_height = img.size
 
         # Espaço horizontal disponível (com margem opcional)
-        margin_x = 50
+        margin_x = 150
         available_width = page_width - 2 * margin_x
 
         # Calcular fator de escala proporcional à largura disponível
