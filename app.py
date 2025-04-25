@@ -132,7 +132,7 @@ def valor_por_extenso(valor):
     palavras_formatadas = [p.capitalize() if p != 'e' else p for p in palavras]
     
     resultado = ' '.join(palavras_formatadas)
-    return f"({resultado})"
+    return f"({resultado} Reais)"
 
 
 # Função para formatar data no formato "Cidade, DD/MM/AAAA"
