@@ -16,21 +16,10 @@ from datetime import datetime
 import math
 
 
-from google.oauth import service_account
-from googleapiclient.discovery import build
-from googleapiclient.http import MediaFileUpload
 
 
 import json
 # Cria o credenciais.json a partir da variável de ambiente
-def criar_arquivo_credenciais():
-    conteudo = os.getenv("GOOGLE_CREDS_JSON")
-    if conteudo:
-        with open("credenciais.json", "w") as f:
-            f.write(conteudo)
-
-# Cria o arquivo ANTES de qualquer coisa que use ele
-criar_arquivo_credenciais()
 
 
 
